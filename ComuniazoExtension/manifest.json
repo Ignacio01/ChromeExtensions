@@ -1,0 +1,19 @@
+{
+	// This file has important application and setup info that Chrome uses
+	"manifest_version": 2,
+
+	"name": "Comuniazo Notifier",
+	"description": "Allows you to get new Twitter nofitications immediately in the desktop",
+	"background": {
+		"page": "background.html"
+	},
+	"version": "1.0",
+	"permissions":[
+		"notifications",
+		"http://www.comuniazo.com/"
+	],
+	"icons" : {
+		"64" : "comuniazo.png"
+	},
+	"content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+}
