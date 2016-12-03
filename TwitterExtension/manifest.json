@@ -1,0 +1,19 @@
+{
+	// This file has important application and setup info that Chrome uses
+	"manifest_version": 2,
+
+	"name": "Rich Tweet Notifier",
+	"description": "Allows you to get new Twitter nofitications immediately in the desktop",
+	"background": {
+		"page": "background.html"
+	},
+	"version": "1.0",
+	"permissions":[
+		"notifications",
+		"https://twitter.com/i/notifications"
+	],
+	"icons" : {
+		"64" : "icon.png"
+	},
+	"content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+}
