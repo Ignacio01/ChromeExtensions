@@ -1,7 +1,7 @@
 var matchesPlayed = [];
 var matchesPunctuated = [];
 var matchesPlaying = [];
-var firstExecution = true;
+var firstExecution = true, finished = false, punctuated = false;
 // In this function we are going to read the screen and anlyze to see if there are any changes.
 // If there are changes with the scores send a notification.
 
@@ -15,7 +15,7 @@ function Game(home, out, result, end, punctuation){
 
 $(function() {
     main()
-    setInterval(main, 10000); // every 10 seconds
+    setInterval(main, 3000); // every 10 seconds
 });
 
 function createAlert(title,message){
@@ -24,9 +24,6 @@ function createAlert(title,message){
 	    title: title,
 	    message: message,
 	    contextMessage: "Comuniazo Notifier",
-	    buttons:[{
-	        title: "Open Link",
-	    }],
 	    iconUrl: "comuniazo.png"
 	};
 	chrome.notifications.create(myNotification);
@@ -64,19 +61,20 @@ function main(){
 
 			if($data.eq(i).find(".bubble-puntos")){
 				punctuation = true;
+				punctuated = true;
 			}else{
 				punctuation = false;
 			}
 
 			if($data.find(".fecha").eq(i).text()=== "Fin"){
 				end = true;
+				finished = true;
 			}else{
 				end = false;
 			}
 			if($data.eq(i).find(".score")){
 				result = $data.find(".score").eq(i).text();
 			}
-
 
 			thisGame = new Game(home, out, result, end, punctuation);
 
@@ -92,7 +90,7 @@ function main(){
 			if(punctuation){
 				if(matchesPunctuated[i] == undefined && !firstExecution){
 					//SEND ALERT
-					createAlert("Punctiation Available","The points for the match " + thisGame.home + "-" + thisGame.out +" are on!");
+					createAlert(thisGame.home + " - " + thisGame.out,"The points for the match are available");
 				}
 				matchesPunctuated[i] = thisGame;
 			}
@@ -100,14 +98,20 @@ function main(){
 			if($data.eq(i).find(".score").text() != "" && !end && !firstExecution){
 				if(matchesPlaying[i] == undefined){
 					//SEND ALERT
-					createAlert("Playing Match","The match " + thisGame.home + "-" + thisGame.out +" is On!");
+					createAlert(thisGame.home + "-" + thisGame.out,"The match is ON!");
 				}
 				if(matchesPlaying[i].result != thisGame.result){
-					createAlert("Goal "+ thisGame.home + "-" + thisGame.out, "New result " + thisGame.result);
+					createAlert("Goal!! ", "New result " +thisGame.home + "-" + thisGame.out + " -> " + thisGame.result);
 				}
 				matchesPlaying[i] = thisGame;
 			}
 
+		}
+		if(firstExecution && finished){
+			createAlert("End Games", "There are games that already finished!");
+		}
+		if(firstExecution && punctuated){
+			createAlert("Punctuation Available", "New punctuations posted");
 		}
 		firstExecution = false;
 	});
