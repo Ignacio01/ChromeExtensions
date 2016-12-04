@@ -15,7 +15,7 @@ function Game(home, out, result, end, punctuation){
 
 $(function() {
     main()
-    setInterval(main, 3000); // every 10 seconds
+    setInterval(main, 10000); // every 10 seconds
 });
 
 function createAlert(title,message){
@@ -57,14 +57,6 @@ function main(){
 			}else{
 				out = out[1][0].toUpperCase() + out[1].slice(1);
 			}
-			
-
-			if($data.eq(i).find(".bubble-puntos")){
-				punctuation = true;
-				punctuated = true;
-			}else{
-				punctuation = false;
-			}
 
 			if($data.find(".fecha").eq(i).text()=== "Fin"){
 				end = true;
@@ -72,6 +64,14 @@ function main(){
 			}else{
 				end = false;
 			}
+
+			if($data.find(".bubble-puntos").eq(i).length>0){
+				punctuation = true;
+				punctuated = true;
+			}else{
+				punctuation = false;
+			}
+
 			if($data.eq(i).find(".score")){
 				result = $data.find(".score").eq(i).text();
 			}
@@ -95,20 +95,29 @@ function main(){
 				matchesPunctuated[i] = thisGame;
 			}
 
-			if($data.eq(i).find(".score").text() != "" && !end && !firstExecution){
-				if(matchesPlaying[i] == undefined){
-					//SEND ALERT
-					createAlert(thisGame.home + "-" + thisGame.out,"The match is ON!");
+			if($data.find(".score").eq(i).text().trim() != "" && !thisGame.end){
+				if(firstExecution){
+					createAlert(thisGame.home + "-" + thisGame.out + " is ON!" , "");
 				}
-				if(matchesPlaying[i].result != thisGame.result){
-					createAlert("Goal!! ", "New result " +thisGame.home + "-" + thisGame.out + " -> " + thisGame.result);
+				game = matchesPlaying[i];
+				console.log(game);
+				if(game != null){
+					if(game.result == null){
+						//SEND ALERT
+						createAlert(thisGame.home + "-" + thisGame.out,"The match is ON!");
+					}
+				}else{
+					if(matchesPlaying[i] != thisGame.result && thisGame.result != " " && !firstExecution){
+						createAlert("Goal!! ", "New result " +thisGame.home + "-" + thisGame.out + " -> " + thisGame.result);
+					}
 				}
+
 				matchesPlaying[i] = thisGame;
 			}
 
 		}
 		if(firstExecution && finished){
-			createAlert("End Games", "There are games that already finished!");
+			createAlert("Finished Games", "There are games that already finished!");
 		}
 		if(firstExecution && punctuated){
 			createAlert("Punctuation Available", "New punctuations posted");
