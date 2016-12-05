@@ -121,8 +121,8 @@ function main(){
 			//Instanciate a game with the values obtained
 			thisGame = new Game(home, out, result, end, punctuation, url);
 
-			//If the match has finished.
-			if(end){
+			//If the match has finished. CHECK allpunctuated ONLY WONT WORK FOR LAST MATCH!!
+			if(end && !allpunctuated){
 				//If the match has finished and it is not in the array matchesPlayed, and it is not the first time
 				// you open the web browser
 				if(matchesPlayed[i] == undefined && !firstExecution){
@@ -134,7 +134,7 @@ function main(){
 			}
 
 			//If the punctuation of the match is on
-			if(punctuation){
+			if(punctuation && !allpunctuated){
 				//If the match wasn't punctuated and it is not the first time opening the web browser
 				if(matchesPunctuated[i] == undefined && !firstExecution){
 					//SEND ALERT
@@ -190,7 +190,6 @@ function main(){
 			matchesPlaying = [];
 			document.body.innerHTML = "";
 		}
-		document.body.innerHTML = "";
 	});
 
 };
