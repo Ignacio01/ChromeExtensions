@@ -1,7 +1,7 @@
 var matchesPlayed = [];
 var matchesPunctuated = [];
 var matchesPlaying = [];
-var firstExecution = true, finished = false, punctuated = false;
+var firstExecution = true, finished = false, punctuated = false, allpunctuated = false;
 // In this function we are going to read the screen and anlyze to see if there are any changes.
 // If there are changes with the scores send a notification.
 
@@ -107,8 +107,10 @@ function main(){
 			if($data.find(".bubble-puntos").eq(i).length>0){
 				punctuation = true;
 				punctuated = true;
+				allpunctuated = true;
 			}else{
 				punctuation = false;
+				allpunctuated = false;
 			}
 
 			//Result of the match.
@@ -172,13 +174,23 @@ function main(){
 		}
 
 		//This messages will appear when the browser will open to let the user know there are punctuations available.
-		if(firstExecution && finished){
+		// It won't pop up anymore when all the matches had been punctuated, as the user won't need the information
+		// anymore.
+		if(firstExecution && finished && !allpunctuated){
 			createAlert("Finished Games", "There are games that already finished!", "http://www.comuniazo.com");
 		}
-		if(firstExecution && punctuated){
+		if(firstExecution && punctuated && !allpunctuated){
 			createAlert("Punctuation Available", "New punctuations posted", "http://www.comuniazo.com");
 		}
+
 		firstExecution = false;
+		if(allpunctuated){
+			matchesPlayed = [];
+			matchesPunctuated = [];
+			matchesPlaying = [];
+			document.body.innerHTML = "";
+		}
+		document.body.innerHTML = "";
 	});
 
 };
