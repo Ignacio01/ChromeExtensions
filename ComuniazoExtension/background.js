@@ -22,14 +22,31 @@ $(function() {
 
 //Creates the pop up message to the user, it receives the title and the message as parameters.
 function createAlert(title,message){
-	var myNotification = {
-	    type: "basic",
-	    title: title,
-	    message: message,
-	    contextMessage: "Comuniazo Notifier",
-	    iconUrl: "comuniazo.png"
-	};
+	if(title == "Punctuation Available"){
+		var myNotification = {
+		    type: "basic",
+		    title: title,
+		    message: message,
+		    contextMessage: "Comuniazo Notifier",
+		    buttons:[{
+		        title: "Check Punctuation",
+		    }],
+		    iconUrl: "comuniazo.png"
+		};
+		chrome.notifications.onButtonClicked.addListener(function() { // fired when button "Open Link"is clicked
+		    window.open('http://www.comuniazo.com');
+		});
+	}else{
+		var myNotification = {
+		    type: "basic",
+		    title: title,
+		    message: message,
+		    contextMessage: "Comuniazo Notifier",
+		    iconUrl: "comuniazo.png"
+		};
+	}
 	chrome.notifications.create(myNotification);
+	
 }
 
 
@@ -114,7 +131,8 @@ function main(){
 				//If the match wasn't punctuated and it is not the first time opening the web browser
 				if(matchesPunctuated[i] == undefined && !firstExecution){
 					//SEND ALERT
-					createAlert(thisGame.home + " - " + thisGame.out,"The points for the match are available");
+					createAlert("Punctuation Available","The points for the match "
+						+thisGame.home + " - " + thisGame.out + ", are available.");
 				}
 				//Add the punctuated game to the array with punctuated games.
 				matchesPunctuated[i] = thisGame;
@@ -135,7 +153,7 @@ function main(){
 					//it means a team scored a goal.
 					console.log(game.result == thisGame.result);
 					if(game.result != thisGame.result && thisGame.result != " " && !firstExecution){
-						createAlert("Goal!! ", "New result " +thisGame.home + "-" + thisGame.out + " -> " + thisGame.result);
+						createAlert("Goal!! ", "New Result: " +thisGame.home + "-" + thisGame.out + "\n" + thisGame.result);
 					}
 				}else{
 					//If the game is not in the array, then indicate the game just began
