@@ -6,12 +6,13 @@ var firstExecution = true, finished = false, punctuated = false;
 // If there are changes with the scores send a notification.
 
 //Class that defines a game.
-function Game(home, out, result, end, punctuation){
+function Game(home, out, result, end, punctuation, url){
 	this.home = home;
 	this.out = out;
 	this.result = result;
 	this.end = end;
 	this.punctuation = punctuation;
+	this.url = url;
 }
 
 //Creates a timer that calls the main function every 10 seconds.
@@ -21,7 +22,9 @@ $(function() {
 });
 
 //Creates the pop up message to the user, it receives the title and the message as parameters.
-function createAlert(title,message){
+// The url will change depending on the pop up. If it is a goal, the page will we directed to the game, if is 
+//General punctuation, it will be sent to the main page.
+function createAlert(title,message, url){
 	if(title == "Punctuation Available"){
 		var myNotification = {
 		    type: "basic",
@@ -34,7 +37,7 @@ function createAlert(title,message){
 		    iconUrl: "comuniazo.png"
 		};
 		chrome.notifications.onButtonClicked.addListener(function() { // fired when button "Open Link"is clicked
-		    window.open('http://www.comuniazo.com');
+		    window.open(url);
 		});
 	}else{
 		var myNotification = {
@@ -69,7 +72,7 @@ function main(){
 		//For every match is being played.
 		for(i = 0; i < $data.find(".partido").length;i++){
 			//Declaration variables for every match.
-			var home, out, result, end, punctuation;
+			var home, out, result, end, punctuation, url;
 
 			// Name Team that plays at home
 			home = $data.find(".casa").eq(i).children().attr('class').split("-");
@@ -98,6 +101,8 @@ function main(){
 				end = false;
 			}
 
+			url = $data.find(".partido-otro").eq(i).attr("href");
+
 			//Find if the punctuation of the players is on
 			if($data.find(".bubble-puntos").eq(i).length>0){
 				punctuation = true;
@@ -112,7 +117,7 @@ function main(){
 			}
 
 			//Instanciate a game with the values obtained
-			thisGame = new Game(home, out, result, end, punctuation);
+			thisGame = new Game(home, out, result, end, punctuation, url);
 
 			//If the match has finished.
 			if(end){
@@ -120,7 +125,7 @@ function main(){
 				// you open the web browser
 				if(matchesPlayed[i] == undefined && !firstExecution){
 					createAlert("End Match","The match " + thisGame.home + "-" + thisGame.out +" has finished! \n" 
-						+"Result: " + thisGame.result);
+						+"Result: " + thisGame.result,url);
 				}
 				//Add the game to the array matches that have finished
 				matchesPlayed[i] = thisGame;
@@ -132,7 +137,7 @@ function main(){
 				if(matchesPunctuated[i] == undefined && !firstExecution){
 					//SEND ALERT
 					createAlert("Punctuation Available","The points for the match "
-						+thisGame.home + " - " + thisGame.out + ", are available.");
+						+thisGame.home + " - " + thisGame.out + ", are available.",url);
 				}
 				//Add the punctuated game to the array with punctuated games.
 				matchesPunctuated[i] = thisGame;
@@ -153,11 +158,12 @@ function main(){
 					//it means a team scored a goal.
 					console.log(game.result == thisGame.result);
 					if(game.result != thisGame.result && thisGame.result != " " && !firstExecution){
-						createAlert("Goal!! ", "New Result: " +thisGame.home + "-" + thisGame.out + "\n" + thisGame.result);
+						//WHEN GOAL PASS LINK OF THE PAGE SO THEY CAN OPEN THE PAGE.
+						createAlert("Goal!! ", "New Result: " +thisGame.home + "-" + thisGame.out + "\n" + thisGame.result,url);
 					}
 				}else{
 					//If the game is not in the array, then indicate the game just began
-					createAlert(thisGame.home + "-" + thisGame.out,"The match is ON!");
+					createAlert(thisGame.home + "-" + thisGame.out,"The match is ON!",url);
 				}
 				//Add to the array matches that are playing now.
 				matchesPlaying[i] = thisGame;
@@ -167,10 +173,10 @@ function main(){
 
 		//This messages will appear when the browser will open to let the user know there are punctuations available.
 		if(firstExecution && finished){
-			createAlert("Finished Games", "There are games that already finished!");
+			createAlert("Finished Games", "There are games that already finished!", "http://www.comuniazo.com");
 		}
 		if(firstExecution && punctuated){
-			createAlert("Punctuation Available", "New punctuations posted");
+			createAlert("Punctuation Available", "New punctuations posted", "http://www.comuniazo.com");
 		}
 		firstExecution = false;
 	});
