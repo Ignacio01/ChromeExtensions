@@ -124,16 +124,17 @@ function main(){
 			// And also the results are posted.
 			if($data.find(".score").eq(i).text().trim() != "" && !thisGame.end){
 				//If it is the first execution, let the user know there is a game going on.
-				if(firstExecution){
+				/*if(firstExecution){
 					createAlert(thisGame.home + "-" + thisGame.out + " is ON!" , "");
-				}
+				}*/
 				//create a variable game that contains if the match was already playing
 				var game = matchesPlaying[i];
 				// If there is a value in game.
 				if(game != null){
 					//If the results change in comparison with the value stored in the array
 					//it means a team scored a goal.
-					if(game != thisGame.result && thisGame.result != " " && !firstExecution){
+					console.log(game.result == thisGame.result);
+					if(game.result != thisGame.result && thisGame.result != " " && !firstExecution){
 						createAlert("Goal!! ", "New result " +thisGame.home + "-" + thisGame.out + " -> " + thisGame.result);
 					}
 				}else{
